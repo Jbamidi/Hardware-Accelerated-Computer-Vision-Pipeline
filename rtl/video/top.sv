@@ -20,16 +20,67 @@ module top(input logic clk,
         logic vde;
         logic [9:0] x;
         logic [9:0] y;
+        logic [7:0] base_red;
+        logic [7:0] base_green;
+        logic [7:0] base_blue;
         logic [7:0] red;
         logic [7:0] green;
         logic [7:0] blue;
 
-        clk_wiz_0 clock_wizard(.clk_in1(clk), .reset(reset), .pxl_clk(pxl_clk), .pxl_clkx5(pxl_clkx5), .locked(locked));
+
+        clk_wiz_0 clock_wizard(.clk_in1(clk), 
+                               .reset(reset), 
+                               .pxl_clk(pxl_clk), 
+                               .pxl_clkx5(pxl_clkx5), 
+                               .locked(locked)
+                               );
         
-        video_timing VGA(.reset(reset), .clk(pxl_clk), .hsync(hsync), .vsync(vsync), .vde(vde), .x(x), .y(y));
+        video_timing VGA(.reset(reset),
+                         .clk(pxl_clk), 
+                         .hsync(hsync), 
+                         .vsync(vsync), 
+                         .vde(vde), 
+                         .x(x), 
+                         .y(y)
+                         );
 
-        test_patterns test(.x(x), .y(y), .vde(vde), .pattern_sel(pattern_sel), .red(red), .green(green), .blue(blue));
+        test_patterns test(.x(x), 
+                           .y(y), 
+                           .vde(vde), 
+                           .pattern_sel(pattern_sel), 
+                           .red(base_red), 
+                           .green(base_green), 
+                           .blue(base_blue)
+                           );
+        overlay overlay_layer(.x(x), 
+                        .y(y), 
+                        .vde(vde), 
+                        .base_red(base_red), 
+                        .base_green(base_green), 
+                        .base_blue(base_blue), 
+                        .red(red), 
+                        .green(green), 
+                        .blue(blue)
+                        );
 
-        hdmi_tx_0 VGA_to_HDMI(.pix_clk(pxl_clk), .pix_clkx5(pxl_clkx5), .pix_clk_locked(locked), .rst(reset), .red(red), .green(green), .blue(blue), .hsync(hsync), .vsync(vsync), .vde(vde), .aux0_din(4'b0), .aux1_din(4'b0), .aux2_din(4'b0), .ade(1'b0), .TMDS_CLK_P(hdmi_clk_p), .TMDS_CLK_N(hdmi_clk_n), .TMDS_DATA_P(hdmi_tx_p), .TMDS_DATA_N(hdmi_tx_n));
+        hdmi_tx_0 VGA_to_HDMI(.pix_clk(pxl_clk), 
+                              .pix_clkx5(pxl_clkx5), 
+                              .pix_clk_locked(locked), 
+                              .rst(reset), 
+                              .red(red), 
+                              .green(green), 
+                              .blue(blue), 
+                              .hsync(hsync), 
+                              .vsync(vsync), 
+                              .vde(vde), 
+                              .aux0_din(4'b0), 
+                              .aux1_din(4'b0), 
+                              .aux2_din(4'b0), 
+                              .ade(1'b0), 
+                              .TMDS_CLK_P(hdmi_clk_p), 
+                              .TMDS_CLK_N(hdmi_clk_n), 
+                              .TMDS_DATA_P(hdmi_tx_p), 
+                              .TMDS_DATA_N(hdmi_tx_n)
+                              );
 
 endmodule
