@@ -1,4 +1,4 @@
-module preprocess(
+module preprocess (
     input  logic              clk,
     input  logic              reset,
     input  logic [9:0]        x,
